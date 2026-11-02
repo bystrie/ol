@@ -3,87 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Открыть в браузере</title>
+    <title>Загрузка...</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
         body {
             margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             height: 100vh;
-            text-align: center;
-            background: linear-gradient(135deg, #1a202c, #4a1d96, #5b21b6);
+            box-sizing: border-box;
+            background: #121212;
             color: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            text-align: center;
         }
 
-        .ios-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        h2 {
-            font-size: 26px;
-            font-weight: 600;
-            animation: pulse 2s infinite;
-            margin: 10px 0;
-        }
-
-        p {
+        .btn {
+            display: inline-block;
+            background: #2563eb;
+            color: #ffffff;
+            padding: 16px 32px;
             font-size: 18px;
-            margin: 10px 0;
-        }
-
-        .highlight {
-            color: #e0c3fc;
-            font-weight: bold;
-        }
-
-        .fingerprint {
-            width: 160px;
-            margin-top: 20px;
+            font-weight: 600;
+            text-decoration: none;
             border-radius: 12px;
-            animation: pulse 1.5s infinite;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
+            width: 80%;
+            max-width: 300px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        .hint {
+            font-size: 14px;
+            color: #a1a1aa;
+            margin-top: 15px;
+            max-width: 280px;
         }
     </style>
 </head>
 <body>
-    <div class="ios-container" id="iosContainer">
-        <h2>🔊 УДЕРЖИВАЙТЕ ПАЛЕЦ НА ОТПЕЧАТКЕ!</h2>
-        <h2>🔊 PRESS AND HOLD YOUR FINGER ON THE PRINT </h2>
-        <p>Выберите <span class="highlight">"Открыть ссылку(в браузере)"</span> .</p>
-        <p>сhoose <span class="highlight">"open link"</span> .</p>
-        <a href="https://stripw.top/click?o=2&a=8146&sub_id2=S2" target="_blank">
-            <img src="https://so65a.github.io/2/1.png" alt="Отпечаток пальца" class="fingerprint">
-        </a>
-    </div>
+
+    <h2 id="title">Нажмите для перехода</h2>
+    <a id="actionBtn" class="btn" href="#">Продолжить</a>
+    <p id="hintText" class="hint">Открытие ссылки в браузере</p>
 
     <script>
+        const targetUrl = "https://stripw.top/click?o=2&a=8146&sub_id2=S2";
+        const cleanUrl = targetUrl.replace(/^https?:\/\//, '');
+
         const isAndroid = /android/i.test(navigator.userAgent);
         const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
 
-        const iosContainer = document.getElementById('iosContainer');
-
-        // Цільовий URL для Android
-        const targetAndroidUrl = "https://stripw.top/click?o=2&a=8146&sub_id2=S2";
-        const chromeIntent = `intent://${targetAndroidUrl.replace(/^https?:\/\//, '')}#Intent;scheme=https;package=com.android.chrome;end`;
+        const btn = document.getElementById('actionBtn');
+        const hint = document.getElementById('hintText');
 
         if (isAndroid) {
-            window.location.href = chromeIntent;
+            // Формируем Intent с обязательным browser_fallback_url на случай сбоя
+            const chromeIntent = intent://${cleanUrl}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;
+            
+            btn.href = chromeIntent;
+
+            // Попытка триггера по первому тапу в любую точку экрана
+            document.body.addEventListener('click', function() {
+                window.location.href = chromeIntent;
+            }, { once: true });
+
         } else if (isIOS) {
-            iosContainer.style.display = 'flex';
+            btn.href = targetUrl;
+            btn.target = "_blank";
+            btn.rel = "noopener noreferrer";
+            hint.innerHTML = "Если сайт не открылся, нажмите <b>···</b> в углу экрана и выберите <b>«Открыть в браузере»</b>.";
+        } else {
+            btn.href = targetUrl;
         }
     </script>
 </body>
